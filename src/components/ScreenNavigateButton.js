@@ -1,10 +1,12 @@
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
+import { Button, StyleSheet } from 'react-native';
+import { useLinkTo } from '@react-navigation/native';
 
-const Home = () => {
+export default ({ title, href }) => {
+  const linkTo = useLinkTo();
 
   return (
-    <Text>HOME</Text>
+    <Button onPress={() => linkTo(href)} title={title} />
   );
 };
 
@@ -26,5 +28,3 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
-
-export default Home;

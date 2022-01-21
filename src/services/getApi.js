@@ -64,27 +64,26 @@ const signup = async data => {
       method: 'POST',
       mode: 'cors',
       headers,
-      body: JSON.stringify(data),
+      body: JSON.stringify(data.data),
     }
   );
 
-  // if (req.ok) {
-  //   const res = req.json();
-  //   res.then(value => {
-  //     Token.setMessage(value.message);
-  //   });
+  if (req.ok) {
+    const res = req.json();
+    await res.then(value => {
+      Token.setMessage(value.message);
+    });
 
-  //   return req.ok;
-  // } else {
-  //   const res = req.json();
-  //   res.then(value => {
-  //     Token.setMessage(value.message);
-  //   });
-  //   console.log('HTTP-Error: ' + req.status);
+    return req.ok;
+  } else {
+    const res = req.json();
+    res.then(value => {
+      Token.setMessage(value.message);
+    });
+    console.log('HTTP-Error: ' + res);
 
-  //   return false;
-  // }
-  if(req.ok) console.log('bravo babe !')
+    return false;
+  }
 };
 
 

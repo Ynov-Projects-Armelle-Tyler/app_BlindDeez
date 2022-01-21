@@ -69,7 +69,7 @@ export default function Login() {
           )}
             <Button
               onPress={handleSubmit(onSubmit)}
-              title="login"
+              title="Signup"
             />
       </View>
   );

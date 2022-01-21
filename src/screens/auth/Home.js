@@ -1,21 +1,34 @@
 import React from 'react';
-import { Text, Button, StyleSheet } from 'react-native';
-
+import { View, Text, StyleSheet, ImageBackground } from 'react-native';
+import styled from 'styled-components/native'
 import ScreenNavigateButton from '../../components/ScreenNavigateButton';
+import bg from '../../assets/NeuBG.png'
+
+const Background = styled.ImageBackground `
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`
+
 
 const Home = () => {
 
   return (
-    <>
+    <Background source={bg}>
       <Text>HOME</Text>
-      <ScreenNavigateButton title="Sign Up" href="/auth/sign/" />
-      <ScreenNavigateButton title="Login" href="/auth/sign/" />
+      <ScreenNavigateButton title="Sign Up" href="/auth/sign/signup"/>
+      <ScreenNavigateButton title="Login" href="/auth/sign/login"/>
       <ScreenNavigateButton title="Guest" href="/selection/home/" />
-    </>
+    </Background>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center"
+  },
   sectionContainer: {
     marginTop: 32,
     paddingHorizontal: 24,

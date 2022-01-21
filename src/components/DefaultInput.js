@@ -1,9 +1,11 @@
 import React from 'react'
 import styled from 'styled-components/native'
 
-const StyledView = styled.TouchableOpacity `
+const StyledInput = styled.TextInput`
+  font-size: 18px;
+  color: #171717;
   background-color: #F1F1F1;
-  width: 240px;
+  width: 300px;
   height: 50px;
   margin: 10px;
   display: flex;
@@ -11,26 +13,16 @@ const StyledView = styled.TouchableOpacity `
   justify-content: center;
   elevation: 3;
   border-radius: 26px;
+  padding: 0 20px;
 `
 
-const StyledImage = styled.Image`
-  color: palevioletred;
-`
-
-const StyledText = styled.Text`
-  font-size: 18px;
-  color: #171717;
-`
-
-export default ({ image, title, onPress }) => {
+export default ({ onBlur, onChangeText, value, placeholder }) => {
     return (
-        <StyledView onPress={onPress}>
-          { image ?. (
-            <StyledImage src={image} />
-          )}
-            <StyledText>
-              {title}
-            </StyledText>
-        </StyledView>
+      <StyledInput
+        onBlur={onBlur}
+        onChangeText={onChangeText}
+        value={value}
+        placeholder={placeholder}
+      />
     )
 }

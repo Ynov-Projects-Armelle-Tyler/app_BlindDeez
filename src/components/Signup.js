@@ -1,15 +1,17 @@
 import * as React from 'react';
-import { View, Text, Button, TextInput } from 'react-native';
+import { View, Text } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
-// import { getApi } from '../services/getApi';
+import { getApi } from '../services/getApi';
+import DefaultInput from './DefaultInput';
+import DefaultButton from './DefaultButton';
 
 export default function Login() {
   const navigation = useNavigation();
   const { control, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = async data => {
-    const result = await getApi.login({ data });
+    const result = await getApi.signup({ data });
     if (result) setIsLogged(true)
   };
 
@@ -21,7 +23,7 @@ export default function Login() {
             required: true,
             }}
             render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
+              <DefaultInput
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
@@ -39,7 +41,7 @@ export default function Login() {
             required: true,
             }}
             render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
+              <DefaultInput
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
@@ -55,7 +57,7 @@ export default function Login() {
             control={control}
             rules={{ required: true }}
             render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
+              <DefaultInput
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
@@ -67,7 +69,7 @@ export default function Login() {
          { errors.password && (
                 <Text style={{ color: 'red' }}>Invalid password</Text>
           )}
-            <Button
+            <DefaultButton
               onPress={handleSubmit(onSubmit)}
               title="Signup"
             />

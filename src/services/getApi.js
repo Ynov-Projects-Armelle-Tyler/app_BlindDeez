@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-  auth
+  auth,
+  user
 } from './config';
 import * as Token from './token';
 
@@ -58,18 +59,18 @@ const login = async data => {
 const signup = async data => {
   const headers = await getHeaders();
   const req = await fetch(
-    auth,
+    user,
     {
       method: 'POST',
       mode: 'cors',
       headers,
-      body: JSON.stringify(data),
+      body: JSON.stringify(data.data),
     }
   );
 
   if (req.ok) {
     const res = req.json();
-    res.then(value => {
+    await res.then(value => {
       Token.setMessage(value.message);
     });
 
@@ -79,7 +80,7 @@ const signup = async data => {
     res.then(value => {
       Token.setMessage(value.message);
     });
-    console.log('HTTP-Error: ' + req.status);
+    console.log('HTTP-Error: ' + res);
 
     return false;
   }

@@ -3,12 +3,13 @@ import styled from 'styled-components/native'
 
 const StyledView = styled.TouchableOpacity `
   background-color: #F1F1F1;
-  width: 240px;
+  width: 200px;
   height: 50px;
   margin: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  align-self: center;
   elevation: 3;
   border-radius: 26px;
 `

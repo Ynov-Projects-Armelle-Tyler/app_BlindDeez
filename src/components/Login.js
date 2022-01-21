@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View, Text } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
-// import { getApi } from '../services/getApi';
+import { getApi } from '../services/getApi';
 import DefaultInput from './DefaultInput';
 import DefaultButton from './DefaultButton';
 

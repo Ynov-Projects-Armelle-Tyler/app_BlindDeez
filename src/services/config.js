@@ -1,3 +1,5 @@
-import { IP } from '@env';
+import { IP } from '@env'
+import { URL } from '@env'
 
-export const auth = `http://${IP}:5000/api/auth`;
+export const auth = `${URL}/auth`
+export const user = `${URL}/general/user`

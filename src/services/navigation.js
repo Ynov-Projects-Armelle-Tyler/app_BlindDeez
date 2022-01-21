@@ -34,7 +34,7 @@ export const linking = {
         path: 'auth/',
         screens: {
           Home: 'home/',
-          Sign: 'sign/',
+          Sign: 'sign/:screen',
         },
       },
       Selection: {

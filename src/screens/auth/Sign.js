@@ -1,33 +1,32 @@
-import React from 'react';
-import { Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react'
+import { Text, Switch } from 'react-native'
+import Signup from '../../components/Signup';
+import Login from '../../components/Login';
+import { useRoute } from '@react-navigation/native';
 
 const Sign = () => {
+  const screen = useRoute().params.screen === 'signup'
+  const [signup, setScreen] = useState(screen);
+  const toggleSwitch = () => setScreen(!signup);
 
   return (
     <>
-      <Text>Login</Text>
-      <Text>SignUp</Text>
+      <Text>{signup ? 'Signup' : 'Login'}</Text>
+      <Switch
+        trackColor={{ false: "#767577", true: "#81b0ff" }}
+        thumbColor={signup ? "#f5dd4b" : "#f4f3f4"}
+        ios_backgroundColor="#3e3e3e"
+        onValueChange={toggleSwitch}
+        value={signup}
+      />
+      { signup ? (
+          <Signup />
+        ) : (
+          <Login />
+        )
+      }
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default Sign;

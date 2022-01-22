@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Switch, FlatList } from 'react-native'
+import { Switch, FlatList, Image } from 'react-native'
 import styled from 'styled-components/native'
 
 import { getApi } from '../../services/getApi'
@@ -14,6 +14,23 @@ const Background = styled.ImageBackground `
 
 const Title = styled.Text `
   color: #171717;
+`
+
+const TrackImage = styled.Image `
+  width: 30px;
+  height: 30px;
+  border-radius: 50px;
+`
+
+const ListItem = styled.View `
+  width: 310px;
+  height: 55px;
+  background: #F1F1F1;
+  border-radius: 8px;
+  color: #171717;
+  display: flex;
+  flex-direction: row;
+  margin: 5px;
 `
 
 const ButtonTitle = styled.Text `
@@ -67,9 +84,13 @@ const CreateParty = () => {
   );
 
   const renderSearchMusic = ({ item }) => (
-    <>
-      <Title>{item.artist.name}</Title>
-    </>
+    <ListItem>
+      <TrackImage source={{
+          uri: item.album.cover_big
+      }} />
+      <Title>{item.artist.name} - {item.title}</Title>
+      <Title></Title>
+    </ListItem>
   );
 
   console.log(searchResult)
@@ -93,7 +114,7 @@ const CreateParty = () => {
             { searchResult ? (
                 <FlatList
                   style={{margin:5}}
-                  numColumns={2}
+                  numColumns={1}
                   data={searchResult}
                   keyExtractor={item => item.id }
                   renderItem={renderSearchMusic}

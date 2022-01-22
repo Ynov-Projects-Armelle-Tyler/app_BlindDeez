@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Switch, FlatList } from 'react-native'
 import styled from 'styled-components/native'
+
+import { getApi } from '../../services/getApi'
 import bg from '../../assets/NeuBG.png'
 import DefaultInput from '../../components/DefaultInput'
 
@@ -50,21 +52,33 @@ const CreateParty = () => {
   const [random, setRandom] = useState(false)
   const toggleRandom = () => setRandom(!random)
 
-  const [music, setMusic] = useState('')
+  const [musicLabel, setMusicLabel] = useState('')
+  const [searchResult, setSearchResult] = useState([])
+
+  const searchTrack = async track => {
+    const result = await getApi.getTrack({ track });
+    if (result) setSearchResult(result.data)
+  }
 
   const renderItem = ({ item }) => (
-    <ButtonMusic onPress={() => setMusic(item.title)}>
+    <ButtonMusic onPress={() => setMusicLabel(item.title)}>
       <ButtonTitle>{item.title}</ButtonTitle>
     </ButtonMusic>
   );
 
-  console.log(music)
+  const renderSearchMusic = ({ item }) => (
+    <>
+      <Title>{item.artist.name}</Title>
+    </>
+  );
+
+  console.log(searchResult)
   return (
     <Background source={bg}>
       {
-        music != '' ? (
+        musicLabel != '' ? (
           <>
-            <Title>{ music }</Title>
+            <Title>{ musicLabel }</Title>
             <Title>Random</Title>
             <Switch
               trackColor='#171717'
@@ -72,7 +86,20 @@ const CreateParty = () => {
               onValueChange={toggleRandom}
               value={random}
             />
-            <DefaultInput placeholder='Search a track'/>
+            <DefaultInput
+              placeholder='Search a track'
+              onSubmitEditing={searchTrack}
+            />
+            { searchResult ? (
+                <FlatList
+                  style={{margin:5}}
+                  numColumns={2}
+                  data={searchResult}
+                  keyExtractor={item => item.id }
+                  renderItem={renderSearchMusic}
+                />
+            ) : ''
+            }
           </>
         ) : (
           <>

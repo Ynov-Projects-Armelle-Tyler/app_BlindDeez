@@ -3,7 +3,7 @@ import {
   auth,
   user,
   party,
-  deezerSearchTrach
+  deezerSearch
 } from './config';
 import * as Token from './token';
 
@@ -118,7 +118,7 @@ const getTrack = async track => {
 
   const headers = await getHeaders();
   const req = await fetch(
-      DeezerSearchTrach + track,
+      deezerSearch + track,
     {
       method: 'GET',
       mode: 'cors',
@@ -129,7 +129,7 @@ const getTrack = async track => {
   if (req.ok) {
     const res = req.json();
 
-    return req.ok;
+    return res;
   } else {
     const res = req.json();
     console.log('HTTP-Error: ' + res);

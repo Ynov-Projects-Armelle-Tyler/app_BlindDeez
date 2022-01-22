@@ -1,7 +1,8 @@
 import { IP } from '@env'
 import { URL } from '@env'
+import { URL_DEEZER } from '@env'
 
 export const auth = `http://${IP}:8081/auth`
 export const user = `http://${IP}:8081/api/v1/general/user`
 export const party = `http://${IP}:8081/api/v1/general/party`
-export const deezerSearchTrack = `${URL_DEEZER}search?q=track: `
+export const deezerSearch = `${URL_DEEZER}search?q=`

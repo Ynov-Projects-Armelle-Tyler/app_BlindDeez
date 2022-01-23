@@ -37,13 +37,12 @@ const StyledScrollView = styled.ScrollView `
 
 const Home = () => {
   const linkTo = useLinkTo();
-  const [parties, setParties] = useState(null);
+  const [parties, setParties] = useState([]);
 
   const getParties = async () => {
     const parties = await getApi.getPendingParties();
-    console.log('ok: ' + parties)
     if (parties) {
-      setParties(parties)
+      setParties(parties.parties)
     }
   }
 
@@ -51,9 +50,11 @@ const Home = () => {
     getParties();
   }, []);
 
+  console.log('lol: ' + parties)
+
   const renderItem = ({ item }) => (
     <View>
-      <Text>{item.title}</Text>
+      <Text>{item._id}</Text>
       <Text>{item.count}</Text>
     </View>
   );
@@ -74,9 +75,8 @@ const Home = () => {
           style={{margin:5}}
           numColumns={2}                  // set number of columns
           columnWrapperStyle={style.row}  // space them out evenly
-
           data={parties}
-          keyExtractor={item => item.id }
+          keyExtractor={item => item._id}
           renderItem={renderItem}
         />
         <ButtonAdd onPress={() => linkTo('/selection/create')}>

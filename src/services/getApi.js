@@ -95,12 +95,11 @@ const getPendingParties = async () => {
     {
       method: 'GET',
       mode: 'cors',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
+      headers
     }
   );
+
+  console.log( await req.ok)
 
   if (req.ok) {
     const parties = await req.json()
@@ -125,6 +124,7 @@ const getTrack = async track => {
       headers,
     }
   );
+  console.log(req)
 
   if (req.ok) {
     const res = req.json();

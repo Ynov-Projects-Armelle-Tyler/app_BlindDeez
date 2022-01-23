@@ -2,11 +2,15 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { Stack, options, linking, navigatorOpts } from './services/navigation';
 
+import { socket } from './services/socket';
 import Auth from './routers/Auth';
 import Selection from './routers/Selection';
 import Game from './routers/Game';
 
 const App = () => {
+
+  socket.emit('on_connect', 'connected');
+
   return (
       <NavigationContainer linking={linking} screenOptions={navigatorOpts}>
         <Stack.Navigator initialRouteName="Auth" >

@@ -8,6 +8,7 @@ import bg from '../../assets/NeuBG.png'
 import Add from '../../assets/Add'
 import userImg from '../../assets/default-user-img.png'
 import { getApi } from '../../services/getApi';
+import { socket } from '../../services/socket';
 
 
 const Background = styled.ImageBackground `
@@ -34,7 +35,6 @@ const Image = styled.Image `
   width: 42px;
   height: 40px;
   margin-right: 10px;
-  filter: drop-shadow(2px 4px 4px rgba(0, 0, 0, 0.25)) drop-shadow(-3px -3px 4px #FFFFFF);
   border-radius: 90px;
 `
 
@@ -46,16 +46,19 @@ const PublicParty = () => {
   const [isPublic, setPublic] = useState(false);
 
   const getParty = async params => {
-    const { party } = await getApi.getParty(params);
-    if (party) {
-      console.log(party);
-      setParty(party)
-      setPublic(party.public)
+    const res = await getApi.getParty(params);
+    if (res) {
+      setParty(res.party)
+      setPublic(res.party.public)
     }
   }
 
   useEffect(() => {
     getParty(id)
+
+    socket.on('user_join_room', async data => {
+      getParty(id)
+    })
   }, []);
 
   const toggleSwitch = () => {

@@ -19,3 +19,15 @@ export const get = (obj = {}, path = '', defaultValue = null) => path
       ? a[c]
       : defaultValue
   , obj);
+
+export const genNum = (l = 5) => {
+  const chars =
+    "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890";
+  const randomArray = Array.from(
+    { length: l },
+    (v, k) => chars[Math.floor(Math.random() * chars.length)]
+  );
+
+  const randomString = randomArray.join("");
+  return randomString;
+};

@@ -9,6 +9,7 @@ import Partyies_logo from '../../assets/Partyies_logo'
 import DefaultButton from '../../components/DefaultButton';
 import DefaultInput from '../../components/DefaultInput';
 import { getApi } from '../../services/getApi';
+import { getStorage } from '../../services/utils';
 
 import { ScrollView, View, FlatList, StyleSheet, Text, StatusBar } from 'react-native';
 
@@ -74,11 +75,10 @@ const Home = () => {
   }
 
   const joinWithCode = async () => {
+    const username = await getStorage('user');
 
     const { party } = await getApi.joinWithCode('code', {
-      player: {
-        username: 'Test username',
-      },
+      player: { username },
       edit_type: 'add',
       code
     });

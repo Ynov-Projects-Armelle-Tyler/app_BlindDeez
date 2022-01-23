@@ -5,7 +5,9 @@ import {
   party,
   deezerSearch
 } from './config';
+import { socket } from './socket';
 import * as Token from './token';
+import { getStorage } from './utils';
 
 const getHeaders = async () => {
   const token = await Token.getToken();
@@ -181,10 +183,16 @@ const joinWithCode = async (id, data) => {
   if (req.ok) {
     const party = await req.json()
 
+    socket.emit('join_room_code', {
+      user: { username: data.player.username },
+      id: party.party._id.toString()
+    })
+
     return party;
   } else {
-    const res = req.json();
-    console.log('HTTP-Error: ' + res);
+    const res = await req.json();
+    console.log('HTTP-Error: ');
+    console.error(res);
 
     return false;
   }

@@ -37,19 +37,19 @@ const StyledScrollView = styled.ScrollView `
 
 const Home = () => {
   const linkTo = useLinkTo();
-  // const [parties, setParties] = useState(null);
+  const [parties, setParties] = useState(null);
 
-  // const getParties = async () => {
-  //   const parties = await getApi.getMoviesFromApiAsync();
-  //   console.log('ok: ' + parties)
-  //   if (parties) {
-  //     setParties(parties)
-  //   }
-  // }
+  const getParties = async () => {
+    const parties = await getApi.getPendingParties();
+    console.log('ok: ' + parties)
+    if (parties) {
+      setParties(parties)
+    }
+  }
 
-  // useEffect(() => {
-  //   getParties();
-  // }, []);
+  useEffect(() => {
+    getParties();
+  }, []);
 
   const renderItem = ({ item }) => (
     <View>
@@ -70,7 +70,7 @@ const Home = () => {
           showsHorizontalScrollIndicator={false}
           numColumns={datas.length / 2}
         /> */}
-        {/* <FlatList
+        <FlatList
           style={{margin:5}}
           numColumns={2}                  // set number of columns
           columnWrapperStyle={style.row}  // space them out evenly
@@ -78,7 +78,7 @@ const Home = () => {
           data={parties}
           keyExtractor={item => item.id }
           renderItem={renderItem}
-        /> */}
+        />
         <ButtonAdd onPress={() => linkTo('/selection/create')}>
           <Add/>
         </ButtonAdd>

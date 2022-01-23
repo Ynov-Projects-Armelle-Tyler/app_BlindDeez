@@ -68,7 +68,7 @@ const signup = async data => {
       headers,
       body: JSON.stringify(data.data),
     }
-  );
+  )
 
   if (req.ok) {
     const res = req.json();

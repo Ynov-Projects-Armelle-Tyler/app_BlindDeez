@@ -4,6 +4,7 @@ import { Stack, options, linking, navigatorOpts } from './services/navigation';
 
 import Auth from './routers/Auth';
 import Selection from './routers/Selection';
+import Game from './routers/Game';
 
 const App = () => {
   return (
@@ -11,6 +12,7 @@ const App = () => {
         <Stack.Navigator initialRouteName="Auth" >
           <Stack.Screen name="Auth" component={Auth} { ...options }/>
           <Stack.Screen name="Selection" component={Selection} { ...options }/>
+          <Stack.Screen name="Game" component={Game} { ...options }/>
         </Stack.Navigator>
       </NavigationContainer>
   );

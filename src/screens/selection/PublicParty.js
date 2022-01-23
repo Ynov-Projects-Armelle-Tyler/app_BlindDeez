@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { useLinkTo } from '@react-navigation/native';
+import { useLinkTo, useRoute } from '@react-navigation/native';
 import styled from 'styled-components/native'
 import ScreenNavigateButton from '../../components/ScreenNavigateButton';
 import bg from '../../assets/NeuBG.png'
@@ -52,84 +52,44 @@ const Modal = styled.Modal `
 `
 
 
-const Home = () => {
+const PublicParty = () => {
   const linkTo = useLinkTo();
+  const { style } = useRoute().params;
   const [parties, setParties] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [code, setCode] = useState();
 
-  const getParties = async () => {
-    const parties = await getApi.getPendingParties();
+  const getParties = async params => {
+    const { parties } = await getApi.getPendingByMusicLabel(params);
     if (parties) {
-      setParties(parties.parties)
+      setParties(parties)
     }
   }
 
   useEffect(() => {
-    getParties();
+    getParties(style)
   }, []);
 
-  const onChange = e => {
-    setCode(e);
-  }
-
-  const joinWithCode = async () => {
-
-    const { party } = await getApi.joinWithCode('code', {
-      player: {
-        username: 'Test username',
-      },
-      edit_type: 'add',
-      code
-    });
-
-    if (party) {
-      linkTo(`/game/lobby/${party._id}`)
-    }
-  }
-
   const renderItem = ({ item }) => (
-    <StyleButton onPress={() => linkTo(`/selection/public/${item._id}`)}>
-      <Text>{item._id}</Text>
+    <StyleButton onPress={() => linkTo(`/game/lobby/${item._id}`)}>
+      <Text>{item.name}</Text>
       <View style={{ flexDirection: 'row' }}>
-        <Partyies_logo />
-        <Text>{item.count}</Text>
+        <Text>{(item.users.length + 1)} Players</Text>
       </View>
     </StyleButton>
   );
 
   return (
     <Background source={bg}>
-      <DefaultButton
-        onPress={() => setModalVisible(true)}
-        title="Join with a code"
+      <Text>{ style }</Text>
+      <FlatList
+        style={{margin:5}}
+        numColumns={2}
+        columnWrapperStyle={style.row}
+        data={parties}
+        keyExtractor={item => item._id}
+        renderItem={renderItem}
       />
-        <FlatList
-          style={{margin:5}}
-          numColumns={2}
-          columnWrapperStyle={style.row}
-          data={parties}
-          keyExtractor={item => item._id}
-          renderItem={renderItem}
-        />
-        <ButtonAdd onPress={() => linkTo('/selection/create')}>
-          <Add/>
-        </ButtonAdd>
-
-        <Modal
-          animationType="slide"
-          visible={modalVisible}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View>
-            <DefaultInput
-              onSubmitEditing={joinWithCode}
-              onChangeText={onChange}
-              value={code}
-              placeholder='CODE'
-            />
-          </View>
-        </Modal>
     </Background>
   );
 };
@@ -140,4 +100,4 @@ const style = StyleSheet.create({
       justifyContent: "space-around"
   }
 });
-export default Home;
+export default PublicParty;

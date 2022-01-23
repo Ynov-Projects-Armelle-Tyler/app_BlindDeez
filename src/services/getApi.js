@@ -113,6 +113,58 @@ const getPendingParties = async () => {
   }
 };
 
+const getPendingByMusicLabel = async style => {
+  const headers = await getHeaders();
+
+  console.log(style);
+  const req = await fetch(
+    `${party}/pending/${style}`,
+    {
+      method: 'GET',
+      mode: 'cors',
+      headers
+    }
+  );
+
+  console.log( await req.ok)
+
+  if (req.ok) {
+    const parties = await req.json()
+
+    return parties;
+  } else {
+    const res = req.json();
+    console.log('HTTP-Error: ' + res);
+
+    return false;
+  }
+};
+
+const joinWithCode = async (id, data) => {
+  const headers = await getHeaders();
+
+  const req = await fetch(
+    `${party}/code/player`,
+    {
+      method: 'PATCH',
+      mode: 'cors',
+      body: JSON.stringify(data),
+      headers
+    }
+  );
+
+  if (req.ok) {
+    const party = await req.json()
+
+    return party;
+  } else {
+    const res = req.json();
+    console.log('HTTP-Error: ' + res);
+
+    return false;
+  }
+};
+
 const getTrack = async track => {
 
   const headers = await getHeaders();
@@ -143,5 +195,7 @@ export const getApi = {
   login,
   signup,
   getPendingParties,
+  getPendingByMusicLabel,
+  joinWithCode,
   getTrack,
 };

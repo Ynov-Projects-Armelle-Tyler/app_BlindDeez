@@ -99,8 +99,6 @@ const getPendingParties = async () => {
     }
   );
 
-  console.log( await req.ok)
-
   if (req.ok) {
     const parties = await req.json()
 
@@ -124,7 +122,6 @@ const getTrack = async track => {
       headers,
     }
   );
-  console.log(req)
 
   if (req.ok) {
     const res = req.json();

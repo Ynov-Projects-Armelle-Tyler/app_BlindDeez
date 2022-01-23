@@ -50,8 +50,6 @@ const Home = () => {
     getParties();
   }, []);
 
-  console.log('lol: ' + parties)
-
   const renderItem = ({ item }) => (
     <View>
       <Text>{item._id}</Text>

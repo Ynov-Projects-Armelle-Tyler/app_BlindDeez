@@ -1,10 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Switch, FlatList, Image } from 'react-native'
 import styled from 'styled-components/native'
 
 import { getApi } from '../../services/getApi'
 import bg from '../../assets/NeuBG.png'
+import Check from '../../assets/Check'
+import Play from '../../assets/Play'
+import Add from '../../assets/Add'
 import DefaultInput from '../../components/DefaultInput'
+
+import SoundPlayer from 'react-native-sound-player'
 
 const Background = styled.ImageBackground `
   flex: 1;
@@ -14,12 +19,14 @@ const Background = styled.ImageBackground `
 
 const Title = styled.Text `
   color: #171717;
+  width: 180px;
 `
 
 const TrackImage = styled.Image `
   width: 30px;
   height: 30px;
   border-radius: 50px;
+  margin: 5px;
 `
 
 const ListItem = styled.View `
@@ -31,6 +38,19 @@ const ListItem = styled.View `
   display: flex;
   flex-direction: row;
   margin: 5px;
+  padding: 0 5px;
+  justify-content: space-between;
+  align-items: center;
+`
+
+const Col = styled.View `
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+`
+const V = styled.View `
+  height: 300px;
 `
 
 const ButtonTitle = styled.Text `
@@ -47,20 +67,17 @@ const ButtonMusic = styled.TouchableOpacity `
   align-items: center;
 `
 
-const datas = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: 'First Item',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: 'Second Item',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: 'Third Item',
-  },
-]
+const ButtonIcon = styled.TouchableOpacity `
+  border-radius: 50px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 30px;
+  elevation: 3;
+  margin: 5px;
+`
 
 const CreateParty = () => {
   const [player, setPlayer] = useState(false)
@@ -69,31 +86,76 @@ const CreateParty = () => {
   const [random, setRandom] = useState(false)
   const toggleRandom = () => setRandom(!random)
 
-  const [musicLabel, setMusicLabel] = useState('')
+  const [musicLabel, setMusicLabel] = useState([])
+  const [music, setMusic] = useState([])
   const [searchResult, setSearchResult] = useState([])
+  const [trackIsPlayed, setTrackIsPlayed] = useState(false)
+  const playlist = [{}]
 
   const searchTrack = async track => {
     const result = await getApi.getTrack({ track });
     if (result) setSearchResult(result.data)
   }
 
+  const getMusicLabel = async () => {
+    const label = await getApi.getPendingParties();
+    if (label) {
+      setMusic(label.parties)
+    }
+  }
+
+  const addToPlaylist = track => {
+    console.log('t: ' + track)
+    playlist.push({ track })
+    console.log('playlist = ' + playlist)
+  }
+
+  const play = async track => {
+    if (trackIsPlayed){
+      await SoundPlayer.stop()
+      await SoundPlayer.playSound(track)
+    }
+
+    await SoundPlayer.playUrl(track)
+    setTrackIsPlayed(!trackIsPlayed)
+  }
+
+  useEffect(() => {
+    getMusicLabel();
+  }, []);
+
   const renderItem = ({ item }) => (
-    <ButtonMusic onPress={() => setMusicLabel(item.title)}>
-      <ButtonTitle>{item.title}</ButtonTitle>
+    <ButtonMusic onPress={() => setMusicLabel(item._id)}>
+      <ButtonTitle>{item._id}</ButtonTitle>
     </ButtonMusic>
   );
 
   const renderSearchMusic = ({ item }) => (
     <ListItem>
-      <TrackImage source={{
-          uri: item.album.cover_big
-      }} />
-      <Title>{item.artist.name} - {item.title}</Title>
-      <Title></Title>
+      <Col>
+        <TrackImage source={{ uri: item.album.cover_big }}/>
+        <Title>{item.artist.name} - {item.title}</Title>
+      </Col>
+      <Col>
+        <ButtonIcon onPress={() => addToPlaylist(item)}><Check width="15px" height="15px"/></ButtonIcon>
+        <ButtonIcon onPress={() => play(item.preview)}><Play width="15px" height="15px"/></ButtonIcon>
+      </Col>
     </ListItem>
   );
 
-  console.log(searchResult)
+ const renderPlaylist = ({ item }) => (
+    <ListItem>
+      <Col>
+        <TrackImage source={{ uri: item.album.cover_big }}/>
+        <Title>{item.artist.name} - {item.title}</Title>
+      </Col>
+      <Col>
+        <ButtonIcon onPress={() => addToPlaylist(item)}><Check width="15px" height="15px"/></ButtonIcon>
+        <ButtonIcon onPress={() => play(item.preview)}><Play width="15px" height="15px"/></ButtonIcon>
+      </Col>
+    </ListItem>
+  );
+
   return (
     <Background source={bg}>
       {
@@ -111,16 +173,24 @@ const CreateParty = () => {
               placeholder='Search a track'
               onSubmitEditing={searchTrack}
             />
+            <V>
             { searchResult ? (
                 <FlatList
                   style={{margin:5}}
                   numColumns={1}
                   data={searchResult}
-                  keyExtractor={item => item.id }
+                  keyExtractor={item => item.id}
                   renderItem={renderSearchMusic}
                 />
-            ) : ''
+              ) : ''
             }
+            </V>
+            {/* <V>
+            <FlatList
+                data={playlist}
+                renderItem={renderPlaylist}
+              />
+            </V> */}
           </>
         ) : (
           <>
@@ -135,8 +205,8 @@ const CreateParty = () => {
             <FlatList
               style={{margin:5}}
               numColumns={2}
-              data={datas}
-              keyExtractor={item => item.id }
+              data={music}
+              keyExtractor={item => item._id }
               renderItem={renderItem}
             />
           </>

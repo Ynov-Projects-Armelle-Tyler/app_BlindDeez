@@ -88,6 +88,31 @@ const signup = async data => {
   }
 };
 
+const getParty = async id => {
+  const headers = await getHeaders();
+  const req = await fetch(
+    `${party}/${id}`,
+    {
+      method: 'GET',
+      mode: 'cors',
+      headers
+    }
+  );
+
+  console.log( await req.ok)
+
+  if (req.ok) {
+    const parties = await req.json()
+
+    return parties;
+  } else {
+    const res = req.json();
+    console.log('HTTP-Error: ' + res);
+
+    return false;
+  }
+};
+
 const getPendingParties = async () => {
   const headers = await getHeaders();
   const req = await fetch(
@@ -197,5 +222,6 @@ export const getApi = {
   getPendingParties,
   getPendingByMusicLabel,
   joinWithCode,
+  getParty,
   getTrack,
 };

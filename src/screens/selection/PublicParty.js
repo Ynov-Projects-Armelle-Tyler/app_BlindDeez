@@ -70,11 +70,17 @@ const PublicParty = () => {
     getParties(style)
   }, []);
 
+  const playerLenght = party => {
+    const master = party?.master_user.player ? 1 : 0
+
+    return party.users.length + master
+  }
+
   const renderItem = ({ item }) => (
     <StyleButton onPress={() => linkTo(`/game/lobby/${item._id}`)}>
       <Text>{item.name}</Text>
       <View style={{ flexDirection: 'row' }}>
-        <Text>{(item.users.length + 1)} Players</Text>
+        <Text>{playerLenght(item)} Players</Text>
       </View>
     </StyleButton>
   );

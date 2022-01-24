@@ -167,11 +167,11 @@ const getPendingByMusicLabel = async style => {
   }
 };
 
-const joinWithCode = async (id, data) => {
+const joinParty = async (id, data) => {
   const headers = await getHeaders();
 
   const req = await fetch(
-    `${party}/code/player`,
+    `${party}/${id}/player`,
     {
       method: 'PATCH',
       mode: 'cors',
@@ -229,7 +229,7 @@ export const getApi = {
   signup,
   getPendingParties,
   getPendingByMusicLabel,
-  joinWithCode,
+  joinParty,
   getParty,
   getTrack,
 };

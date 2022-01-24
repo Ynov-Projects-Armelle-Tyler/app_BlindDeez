@@ -74,10 +74,10 @@ const Home = () => {
     setCode(e);
   }
 
-  const joinWithCode = async () => {
+  const joinParty = async () => {
     const username = await getStorage('user');
 
-    const { party } = await getApi.joinWithCode('code', {
+    const { party } = await getApi.joinParty('code', {
       player: { username },
       edit_type: 'add',
       code
@@ -125,7 +125,7 @@ const Home = () => {
         >
           <View>
             <DefaultInput
-              onSubmitEditing={joinWithCode}
+              onSubmitEditing={joinParty}
               onChangeText={onChange}
               value={code}
               placeholder='CODE'

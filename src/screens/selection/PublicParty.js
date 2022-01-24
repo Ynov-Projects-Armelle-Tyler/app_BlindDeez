@@ -9,6 +9,7 @@ import Partyies_logo from '../../assets/Partyies_logo'
 import DefaultButton from '../../components/DefaultButton';
 import DefaultInput from '../../components/DefaultInput';
 import { getApi } from '../../services/getApi';
+import { getStorage } from '../../services/utils';
 
 import { ScrollView, View, FlatList, StyleSheet, Text, StatusBar } from 'react-native';
 
@@ -76,8 +77,21 @@ const PublicParty = () => {
     return party.users.length + master
   }
 
+  const joinParty = async data => {
+    const username = await getStorage('user');
+
+    const { party } = await getApi.joinParty(data._id, {
+      player: { username },
+      edit_type: 'add',
+    });
+
+    if (party) {
+      linkTo(`/game/lobby/${party._id}`)
+    }
+  }
+
   const renderItem = ({ item }) => (
-    <StyleButton onPress={() => linkTo(`/game/lobby/${item._id}`)}>
+    <StyleButton onPress={() => joinParty(item)}>
       <Text>{item.name}</Text>
       <View style={{ flexDirection: 'row' }}>
         <Text>{playerLenght(item)} Players</Text>
@@ -88,14 +102,21 @@ const PublicParty = () => {
   return (
     <Background source={bg}>
       <Text>{ style }</Text>
-      <FlatList
-        style={{margin:5}}
-        numColumns={2}
-        columnWrapperStyle={style.row}
-        data={parties}
-        keyExtractor={item => item._id}
-        renderItem={renderItem}
-      />
+      { parties?.length
+          ? (
+            <FlatList
+              style={{margin:5}}
+              numColumns={2}
+              columnWrapperStyle={style.row}
+              data={parties}
+              keyExtractor={item => item._id}
+              renderItem={renderItem}
+            />
+          )
+          : (
+            <Text>0 Parties</Text>
+          )
+      }
     </Background>
   );
 };

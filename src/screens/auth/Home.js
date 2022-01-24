@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components/native'
 import ScreenNavigateButton from '../../components/ScreenNavigateButton';
 import bg from '../../assets/NeuBG.png'
-import { setStorage, genNum } from '../../services/utils'
+import { setStorage, getStorage, genNum } from '../../services/utils'
 
 const Background = styled.ImageBackground `
   flex: 1;
@@ -13,7 +13,11 @@ const Background = styled.ImageBackground `
 const Home = () => {
 
   const onGuest = async () => {
-    await setStorage('user', `guest-${genNum()}`);
+    const user = await getStorage('user');
+
+    if (!user) {
+      await setStorage('user', `guest-${genNum()}`);
+    }
   };
 
   return (

@@ -9,13 +9,13 @@ import Play from '../../assets/Play'
 import Pause from '../../assets/Play'
 import Add from '../../assets/Add'
 import DefaultInput from '../../components/DefaultInput'
+// import ResizePanel from '../../components/ResizePanel'
 
 import Sound from 'react-native-sound'
 
 const Background = styled.ImageBackground `
   flex: 1;
   align-items: center;
-  justify-content: center;
 `
 
 const Title = styled.Text `
@@ -54,6 +54,14 @@ const V = styled.View `
   height: 300px;
 `
 
+const PlaylistView = styled.View `
+  background-color: #E5E5E5;
+  min-width: 95%;
+  height: 300px;
+  margin: -10px;
+  border-radius: 30px;
+`
+
 const ButtonTitle = styled.Text `
   color: white;
 `
@@ -89,12 +97,13 @@ const CreateParty = () => {
 
   const [musicLabel, setMusicLabel] = useState([])
   const [music, setMusic] = useState([])
+  const [playlist, setPlaylist] = useState([])
   const [searchResult, setSearchResult] = useState([])
   const [trackIsPlayed, setTrackIsPlayed] = useState({ url: null, track: null, played: false })
-  const playlist = [{}]
 
-  const searchTrack = async track => {
-    const result = await getApi.getTrack({ track });
+  const searchTrack = async e => {
+    const track = e.nativeEvent.text
+    const result = await getApi.getTrack(track);
     if (result) setSearchResult(result.data)
   }
 
@@ -106,9 +115,7 @@ const CreateParty = () => {
   }
 
   const addToPlaylist = track => {
-    console.log('t: ' + track)
-    playlist.push({ track })
-    console.log('playlist = ' + playlist)
+    setPlaylist([...playlist, track])
   }
 
   const play = async url => {
@@ -166,8 +173,12 @@ const CreateParty = () => {
         <Title>{item.artist.name} - {item.title}</Title>
       </Col>
       <Col>
-        <ButtonIcon onPress={() => addToPlaylist(item)}><Check width="15px" height="15px"/></ButtonIcon>
-        <ButtonIcon onPress={() => play(item.preview)}><Play width="15px" height="15px"/></ButtonIcon>
+        <ButtonIcon onPress={() => addToPlaylist(item)}>
+          <Check width="15px" height="15px"/>
+        </ButtonIcon>
+        <ButtonIcon onPress={() => play(item.preview)}>
+          <Play width="15px" height="15px"/>
+        </ButtonIcon>
       </Col>
     </ListItem>
   );
@@ -201,12 +212,15 @@ const CreateParty = () => {
               ) : ''
             }
             </V>
-            {/* <V>
-            <FlatList
+            <PlaylistView>
+              <FlatList
+                style={{margin:5}}
+                numColumns={1}
                 data={playlist}
+                keyExtractor={item => item.id}
                 renderItem={renderPlaylist}
               />
-            </V> */}
+            </PlaylistView>
           </>
         ) : (
           <>

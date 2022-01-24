@@ -8,6 +8,7 @@ import Check from '../../assets/Check'
 import Play from '../../assets/Play'
 import Pause from '../../assets/Play'
 import Add from '../../assets/Add'
+import Remove from '../../assets/Remove'
 import DefaultInput from '../../components/DefaultInput'
 // import ResizePanel from '../../components/ResizePanel'
 
@@ -118,6 +119,10 @@ const CreateParty = () => {
     setPlaylist([...playlist, track])
   }
 
+  const removeToPlaylist = track => {
+    setPlaylist(playlist.filter(e => e !== track))
+  }
+
   const play = async url => {
     if (trackIsPlayed.played){
       trackIsPlayed.track.stop()
@@ -173,8 +178,8 @@ const CreateParty = () => {
         <Title>{item.artist.name} - {item.title}</Title>
       </Col>
       <Col>
-        <ButtonIcon onPress={() => addToPlaylist(item)}>
-          <Check width="15px" height="15px"/>
+        <ButtonIcon onPress={() => removeToPlaylist(item)}>
+          <Remove width="15px" height="15px"/>
         </ButtonIcon>
         <ButtonIcon onPress={() => play(item.preview)}>
           <Play width="15px" height="15px"/>

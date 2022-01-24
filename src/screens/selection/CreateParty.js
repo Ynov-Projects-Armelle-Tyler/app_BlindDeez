@@ -6,10 +6,11 @@ import { getApi } from '../../services/getApi'
 import bg from '../../assets/NeuBG.png'
 import Check from '../../assets/Check'
 import Play from '../../assets/Play'
+import Pause from '../../assets/Play'
 import Add from '../../assets/Add'
 import DefaultInput from '../../components/DefaultInput'
 
-import SoundPlayer from 'react-native-sound-player'
+import Sound from 'react-native-sound'
 
 const Background = styled.ImageBackground `
   flex: 1;
@@ -89,7 +90,7 @@ const CreateParty = () => {
   const [musicLabel, setMusicLabel] = useState([])
   const [music, setMusic] = useState([])
   const [searchResult, setSearchResult] = useState([])
-  const [trackIsPlayed, setTrackIsPlayed] = useState(false)
+  const [trackIsPlayed, setTrackIsPlayed] = useState({ url: null, track: null, played: false })
   const playlist = [{}]
 
   const searchTrack = async track => {
@@ -110,14 +111,25 @@ const CreateParty = () => {
     console.log('playlist = ' + playlist)
   }
 
-  const play = async track => {
-    if (trackIsPlayed){
-      await SoundPlayer.stop()
-      await SoundPlayer.playSound(track)
+  const play = async url => {
+    if (trackIsPlayed.played){
+      trackIsPlayed.track.stop()
+      trackIsPlayed.track.release()
+      setTrackIsPlayed({ ...trackIsPlayed, played: false })
     }
 
-    await SoundPlayer.playUrl(track)
-    setTrackIsPlayed(!trackIsPlayed)
+    if (trackIsPlayed.url !== url) {
+      const song = new Sound(url, Sound.MAIN_BUNDLE, (error) => {
+        if (error) {
+          console.log('failed to load the sound', error);
+          return;
+        }
+        song.play(e => console.log(e))
+      });
+      setTrackIsPlayed({ url: url, track: song, played: true })
+    } else {
+      setTrackIsPlayed({ url: null, track: null, played: false })
+    }
   }
 
   useEffect(() => {
@@ -137,8 +149,12 @@ const CreateParty = () => {
         <Title>{item.artist.name} - {item.title}</Title>
       </Col>
       <Col>
-        <ButtonIcon onPress={() => addToPlaylist(item)}><Check width="15px" height="15px"/></ButtonIcon>
-        <ButtonIcon onPress={() => play(item.preview)}><Play width="15px" height="15px"/></ButtonIcon>
+        <ButtonIcon onPress={() => addToPlaylist(item)}>
+          <Check width="15px" height="15px"/>
+        </ButtonIcon>
+        <ButtonIcon onPress={() => play(item.preview)}>
+          <Play width="15px" height="15px"/>
+        </ButtonIcon>
       </Col>
     </ListItem>
   );

@@ -9,6 +9,7 @@ import Add from '../../assets/Add'
 import userImg from '../../assets/default-user-img.png'
 import { getApi } from '../../services/getApi';
 import { socket } from '../../services/socket';
+import { getStorage } from '../../services/utils';
 
 
 const Background = styled.ImageBackground `
@@ -38,6 +39,17 @@ const Image = styled.Image `
   border-radius: 90px;
 `
 
+const PlayButtonView = styled.View `
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position: absolute;
+  bottom: 20px;
+  right: 6%;
+  elevation: 3;
+`
+
 
 const PublicParty = () => {
   const linkTo = useLinkTo();
@@ -45,12 +57,16 @@ const PublicParty = () => {
   const { id } = useRoute().params;
   const [party, setParty] = useState({});
   const [isPublic, setPublic] = useState(false);
+  const [isMaster, setMaster] = useState(false);
 
   const getParty = async params => {
+    const user = await getStorage('user');
     const res = await getApi.getParty(params);
+
     if (res) {
       setParty(res.party)
       setPublic(res.party.public)
+      setMaster(!(res.party?.master_user?.username === user));
     }
   }
 
@@ -110,7 +126,6 @@ const PublicParty = () => {
     return party?.users?.length + master
   }
 
-
   const renderItem = ({ item }) => (
     <View style={style.viewCenter}>
       <Image source={userImg} />
@@ -133,6 +148,7 @@ const PublicParty = () => {
           ios_backgroundColor="#3e3e3e"
           onValueChange={toggleSwitch}
           value={isPublic}
+          disabled={isMaster}
         />
         <Text>{ isPublic ? 'Public' : 'Private' }</Text>
       </View>
@@ -146,6 +162,13 @@ const PublicParty = () => {
           renderItem={renderItem}
         />
       </View>
+      <PlayButtonView>
+          <ScreenNavigateButton
+            title="Play"
+            href={`/game/playing/${party._id}`}
+            disabled={isMaster}
+          />
+      </PlayButtonView>
     </Background>
   );
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import { useLinkTo } from '@react-navigation/native';
 import DefaultButton from './DefaultButton.js';
 
-export default ({ title, href, onPress }) => {
+export default ({ title, href, onPress, ...rest }) => {
   const linkTo = useLinkTo();
 
   const _onPress = async () => {
@@ -11,6 +11,6 @@ export default ({ title, href, onPress }) => {
   };
 
   return (
-    <DefaultButton onPress={_onPress} title={title} />
+    <DefaultButton onPress={_onPress} title={title} {...rest} />
   );
 };

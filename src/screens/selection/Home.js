@@ -85,6 +85,8 @@ const Home = () => {
 
     if (party) {
       linkTo(`/game/lobby/${party._id}`)
+      setModalVisible(false)
+      setCode('')
     }
   }
 

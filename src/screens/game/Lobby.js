@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, View, FlatList, StyleSheet, Text, Switch } from 'react-native';
+import { ScrollView, View, FlatList, StyleSheet, Text, Switch, Alert, BackHandler } from 'react-native';
 
-import { useLinkTo, useRoute } from '@react-navigation/native';
+import { useLinkTo, useRoute, useNavigation } from '@react-navigation/native';
 import styled from 'styled-components/native'
 import ScreenNavigateButton from '../../components/ScreenNavigateButton';
 import bg from '../../assets/NeuBG.png'
@@ -41,6 +41,7 @@ const Image = styled.Image `
 
 const PublicParty = () => {
   const linkTo = useLinkTo();
+  const navigation = useNavigation();
   const { id } = useRoute().params;
   const [party, setParty] = useState({});
   const [isPublic, setPublic] = useState(false);
@@ -55,10 +56,47 @@ const PublicParty = () => {
 
   useEffect(() => {
     getParty(id)
+  }, []);
 
-    socket.on('user_join_room', async data => {
-      getParty(id)
-    })
+  useEffect(() => {
+    const callback = async data => {
+      await getParty(id)
+    }
+
+    socket.on('user_join_room', callback)
+    socket.on('user_leave_room', callback)
+
+    return () => {
+      socket.off('user_join_room', callback);
+      socket.off('user_leave_room', callback);
+    }
+  }, [socket]);
+
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert("Hold on!", "Are you sure you want to leave party ?", [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel"
+        },
+        {
+          text: "YES",
+          onPress: () => {
+            socket.emit('user_leave_room');
+            linkTo('/selection/home/');
+          }
+        }
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
   }, []);
 
   const toggleSwitch = () => {

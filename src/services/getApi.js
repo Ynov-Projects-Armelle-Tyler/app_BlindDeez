@@ -3,9 +3,11 @@ import {
   auth,
   user,
   party,
-  deezerSearchTrach
+  deezerSearch
 } from './config';
+import { socket } from './socket';
 import * as Token from './token';
+import { getStorage } from './utils';
 
 const getHeaders = async () => {
   const token = await Token.getToken();
@@ -68,7 +70,7 @@ const signup = async data => {
       headers,
       body: JSON.stringify(data.data),
     }
-  );
+  )
 
   if (req.ok) {
     const res = req.json();
@@ -88,19 +90,18 @@ const signup = async data => {
   }
 };
 
-const getPendingParties = async () => {
+const getParty = async id => {
   const headers = await getHeaders();
   const req = await fetch(
-    party + '/pending',
+    `${party}/${id}`,
     {
       method: 'GET',
       mode: 'cors',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
+      headers
     }
   );
+
+  console.log( await req.ok)
 
   if (req.ok) {
     const parties = await req.json()
@@ -114,22 +115,168 @@ const getPendingParties = async () => {
   }
 };
 
+const getPendingParties = async () => {
+  const headers = await getHeaders();
+  const req = await fetch(
+    party + '/pending',
+    {
+      method: 'GET',
+      mode: 'cors',
+      headers
+    }
+  );
+
+  console.log( await req.ok)
+
+  if (req.ok) {
+    const parties = await req.json()
+
+    return parties;
+  } else {
+    const res = req.json();
+    console.log('HTTP-Error: ' + res);
+
+    return false;
+  }
+};
+
+const getPendingByMusicLabel = async style => {
+  const headers = await getHeaders();
+
+  console.log(style);
+  const req = await fetch(
+    `${party}/pending/${style}`,
+    {
+      method: 'GET',
+      mode: 'cors',
+      headers
+    }
+  );
+
+  console.log( await req.ok)
+
+  if (req.ok) {
+    const parties = await req.json()
+
+    return parties;
+  } else {
+    const res = req.json();
+    console.log('HTTP-Error: ' + res);
+
+    return false;
+  }
+};
+
+const joinParty = async (id, data) => {
+  const headers = await getHeaders();
+
+  const req = await fetch(
+    `${party}/${id}/player`,
+    {
+      method: 'PATCH',
+      mode: 'cors',
+      body: JSON.stringify(data),
+      headers
+    }
+  );
+
+  if (req.ok) {
+    const party = await req.json()
+
+    socket.emit('join_room_code', {
+      user: { username: data.player.username },
+      id: party.party._id.toString()
+    })
+
+    return party;
+  } else {
+    const res = await req.json();
+    console.log('HTTP-Error: ');
+    console.error(res);
+
+    return false;
+  }
+};
+
+const editPublic = async (id, data) => {
+  const headers = await getHeaders();
+
+  const req = await fetch(
+    `${party}/${id}/public`,
+    {
+      method: 'PATCH',
+      mode: 'cors',
+      body: JSON.stringify({ public: data }),
+      headers
+    }
+  );
+
+  if (req.ok) {
+    const party = await req.json()
+
+    socket.emit('edit_party_visibility', {
+      public: party.party.public,
+      id: party.party._id.toString()
+    })
+
+    return party;
+  } else {
+    const res = await req.json();
+    console.log('HTTP-Error: ');
+    console.error(res);
+
+    return false;
+  }
+};
+
+const editName = async (id, data) => {
+  const headers = await getHeaders();
+
+  const req = await fetch(
+    `${party}/${id}/name`,
+    {
+      method: 'PATCH',
+      mode: 'cors',
+      body: JSON.stringify({ name: data }),
+      headers
+    }
+  );
+
+  if (req.ok) {
+    const party = await req.json()
+
+    socket.emit('edit_party_visibility', {
+      public: party.party.public,
+      id: party.party._id.toString()
+    })
+
+    return party;
+  } else {
+    const res = await req.json();
+    console.log('HTTP-Error: ');
+    console.error(res);
+
+    return false;
+  }
+};
+
 const getTrack = async track => {
 
   const headers = await getHeaders();
   const req = await fetch(
-      DeezerSearchTrach + track,
+      deezerSearch + track,
     {
       method: 'GET',
       mode: 'cors',
       headers,
     }
   );
+  console.log(req)
 
   if (req.ok) {
     const res = req.json();
 
-    return req.ok;
+    return res;
   } else {
     const res = req.json();
     console.log('HTTP-Error: ' + res);
@@ -143,5 +290,10 @@ export const getApi = {
   login,
   signup,
   getPendingParties,
+  getPendingByMusicLabel,
+  joinParty,
+  getParty,
+  editPublic,
+  editName,
   getTrack,
 };

@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
-import { Switch, FlatList } from 'react-native'
+import { Switch, FlatList, Image } from 'react-native'
 import styled from 'styled-components/native'
+
+import { getApi } from '../../services/getApi'
 import bg from '../../assets/NeuBG.png'
 import DefaultInput from '../../components/DefaultInput'
 
@@ -12,6 +14,23 @@ const Background = styled.ImageBackground `
 
 const Title = styled.Text `
   color: #171717;
+`
+
+const TrackImage = styled.Image `
+  width: 30px;
+  height: 30px;
+  border-radius: 50px;
+`
+
+const ListItem = styled.View `
+  width: 310px;
+  height: 55px;
+  background: #F1F1F1;
+  border-radius: 8px;
+  color: #171717;
+  display: flex;
+  flex-direction: row;
+  margin: 5px;
 `
 
 const ButtonTitle = styled.Text `
@@ -50,21 +69,37 @@ const CreateParty = () => {
   const [random, setRandom] = useState(false)
   const toggleRandom = () => setRandom(!random)
 
-  const [music, setMusic] = useState('')
+  const [musicLabel, setMusicLabel] = useState('')
+  const [searchResult, setSearchResult] = useState([])
+
+  const searchTrack = async track => {
+    const result = await getApi.getTrack({ track });
+    if (result) setSearchResult(result.data)
+  }
 
   const renderItem = ({ item }) => (
-    <ButtonMusic onPress={() => setMusic(item.title)}>
+    <ButtonMusic onPress={() => setMusicLabel(item.title)}>
       <ButtonTitle>{item.title}</ButtonTitle>
     </ButtonMusic>
   );
 
-  console.log(music)
+  const renderSearchMusic = ({ item }) => (
+    <ListItem>
+      <TrackImage source={{
+          uri: item.album.cover_big
+      }} />
+      <Title>{item.artist.name} - {item.title}</Title>
+      <Title></Title>
+    </ListItem>
+  );
+
+  console.log(searchResult)
   return (
     <Background source={bg}>
       {
-        music != '' ? (
+        musicLabel != '' ? (
           <>
-            <Title>{ music }</Title>
+            <Title>{ musicLabel }</Title>
             <Title>Random</Title>
             <Switch
               trackColor='#171717'
@@ -72,7 +107,20 @@ const CreateParty = () => {
               onValueChange={toggleRandom}
               value={random}
             />
-            <DefaultInput placeholder='Search a track'/>
+            <DefaultInput
+              placeholder='Search a track'
+              onSubmitEditing={searchTrack}
+            />
+            { searchResult ? (
+                <FlatList
+                  style={{margin:5}}
+                  numColumns={1}
+                  data={searchResult}
+                  keyExtractor={item => item.id }
+                  renderItem={renderSearchMusic}
+                />
+            ) : ''
+            }
           </>
         ) : (
           <>

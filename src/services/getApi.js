@@ -229,6 +229,37 @@ const editPublic = async (id, data) => {
   }
 };
 
+const editName = async (id, data) => {
+  const headers = await getHeaders();
+
+  const req = await fetch(
+    `${party}/${id}/name`,
+    {
+      method: 'PATCH',
+      mode: 'cors',
+      body: JSON.stringify({ name: data }),
+      headers
+    }
+  );
+
+  if (req.ok) {
+    const party = await req.json()
+
+    socket.emit('edit_party_visibility', {
+      public: party.party.public,
+      id: party.party._id.toString()
+    })
+
+    return party;
+  } else {
+    const res = await req.json();
+    console.log('HTTP-Error: ');
+    console.error(res);
+
+    return false;
+  }
+};
+
 const getTrack = async track => {
 
   const headers = await getHeaders();
@@ -263,5 +294,6 @@ export const getApi = {
   joinParty,
   getParty,
   editPublic,
+  editName,
   getTrack,
 };

@@ -28,6 +28,20 @@ const StyleView = styled.View `
   margin: 10px;
 `
 
+const StyledInput = styled.TextInput`
+  color: #171717;
+  background-color: #F1F1F1;
+  width: 150px;
+  height: 50px;
+  margin: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  elevation: 3;
+  border-radius: 26px;
+  padding: 0 20px;
+`
+
 const Modal = styled.Modal `
   background-color: white;
 `
@@ -59,6 +73,7 @@ const PublicParty = () => {
   const [isPublic, setPublic] = useState(false);
   const [isMaster, setMaster] = useState(false);
   const [code, setCode] = useState(false);
+  const [name, setName] = useState({ isEditing: false, value: null });
 
   const getParty = async params => {
     const user = await getStorage('user');
@@ -69,6 +84,7 @@ const PublicParty = () => {
       setPublic(res.party.public)
       setMaster(!(res.party?.master_user?.username === user));
       setCode(res.party?.code || undefined)
+      setName({ ...name, value: res.party?.name })
     }
   }
 
@@ -127,6 +143,14 @@ const PublicParty = () => {
     }
   }
 
+  const editName = async e => {
+    const res = await getApi.editName(id, name.value);
+
+    if (true) {
+      setName({ ...name, isEditing: false })
+    }
+  }
+
   const playerLenght = () => {
     const master = party?.master_user?.player ? 1 : 0
 
@@ -146,7 +170,23 @@ const PublicParty = () => {
         <StyleView>
           <Text>{ party?.music_label }</Text>
         </StyleView>
-        <Text>{ party?.name }</Text>
+        { name.isEditing ?
+          <StyledInput
+            value={name.value}
+            onChangeText={(value) => setName({ ...name, value })}
+            autoFocus
+            onBlur={editName}
+          /> :
+          <Text
+            onPress={() => {
+              if (!isMaster) {
+                setName({ ...name, isEditing: true })
+              }
+            }}
+          >
+            {name.value}
+          </Text>
+        }
       </View>
       <View style={style.viewCenter}>
         <Switch

@@ -58,6 +58,7 @@ const PublicParty = () => {
   const [party, setParty] = useState({});
   const [isPublic, setPublic] = useState(false);
   const [isMaster, setMaster] = useState(false);
+  const [code, setCode] = useState(false);
 
   const getParty = async params => {
     const user = await getStorage('user');
@@ -67,12 +68,13 @@ const PublicParty = () => {
       setParty(res.party)
       setPublic(res.party.public)
       setMaster(!(res.party?.master_user?.username === user));
+      setCode(res.party?.code || undefined)
     }
   }
 
   useEffect(() => {
     getParty(id)
-  }, []);
+  }, [isPublic]);
 
   useEffect(() => {
     const callback = async data => {
@@ -81,10 +83,12 @@ const PublicParty = () => {
 
     socket.on('user_join_room', callback)
     socket.on('user_leave_room', callback)
+    socket.on('edit_party_visibility', callback)
 
     return () => {
       socket.off('user_join_room', callback);
       socket.off('user_leave_room', callback);
+      socket.off('edit_party_visibility', callback);
     }
   }, [socket]);
 
@@ -115,9 +119,12 @@ const PublicParty = () => {
     return () => backHandler.remove();
   }, []);
 
-  const toggleSwitch = () => {
-    setPublic(!isPublic);
-    // WARNING: PATCH party with api
+  const toggleSwitch = async e => {
+    const res = await getApi.editPublic(id, e);
+
+    if (res) {
+      setPublic(e);
+    }
   }
 
   const playerLenght = () => {
@@ -151,6 +158,7 @@ const PublicParty = () => {
           disabled={isMaster}
         />
         <Text>{ isPublic ? 'Public' : 'Private' }</Text>
+        <Text style={{ marginLeft: 10 }}>{ party?.code }</Text>
       </View>
       <View style={{ marginBottom: 20 }}>
         <Text>Players { `(${playerLenght()}/15) :` }</Text>

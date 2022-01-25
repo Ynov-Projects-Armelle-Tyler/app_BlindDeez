@@ -198,6 +198,37 @@ const joinParty = async (id, data) => {
   }
 };
 
+const editPublic = async (id, data) => {
+  const headers = await getHeaders();
+
+  const req = await fetch(
+    `${party}/${id}/public`,
+    {
+      method: 'PATCH',
+      mode: 'cors',
+      body: JSON.stringify({ public: data }),
+      headers
+    }
+  );
+
+  if (req.ok) {
+    const party = await req.json()
+
+    socket.emit('edit_party_visibility', {
+      public: party.party.public,
+      id: party.party._id.toString()
+    })
+
+    return party;
+  } else {
+    const res = await req.json();
+    console.log('HTTP-Error: ');
+    console.error(res);
+
+    return false;
+  }
+};
+
 const getTrack = async track => {
 
   const headers = await getHeaders();
@@ -231,5 +262,6 @@ export const getApi = {
   getPendingByMusicLabel,
   joinParty,
   getParty,
+  editPublic,
   getTrack,
 };

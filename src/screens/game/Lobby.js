@@ -3,7 +3,7 @@ import { ScrollView, View, FlatList, StyleSheet, Text, Switch, Alert, BackHandle
 
 import { useLinkTo, useRoute, useNavigation } from '@react-navigation/native';
 import styled from 'styled-components/native'
-import ScreenNavigateButton from '../../components/ScreenNavigateButton';
+import DefaultButton from '../../components/DefaultButton';
 import bg from '../../assets/NeuBG.png'
 import Add from '../../assets/Add'
 import userImg from '../../assets/default-user-img.png'
@@ -96,15 +96,21 @@ const PublicParty = () => {
     const callback = async data => {
       await getParty(id)
     }
+    const lauch = () => {
+      linkTo(`/game/playing/${id}`)
+    }
 
     socket.on('user_join_room', callback)
     socket.on('user_leave_room', callback)
     socket.on('edit_party_visibility', callback)
 
+    socket.on('master_launch_game', lauch)
+
     return () => {
       socket.off('user_join_room', callback);
       socket.off('user_leave_room', callback);
       socket.off('edit_party_visibility', callback);
+      socket.off('master_launch_game', lauch);
     }
   }, [socket]);
 
@@ -149,6 +155,15 @@ const PublicParty = () => {
     if (true) {
       setName({ ...name, isEditing: false })
     }
+  }
+
+  const playGame = async e => {
+    // const res = await getApi.playGame(id, 'in_game');
+    //
+    // if (res) {
+    //   socket.emit('master_launch_game', { id });
+    // }
+    socket.emit('master_launch_game', { id });
   }
 
   const playerLenght = () => {
@@ -211,10 +226,10 @@ const PublicParty = () => {
         />
       </View>
       <PlayButtonView>
-          <ScreenNavigateButton
+          <DefaultButton
             title="Play"
-            href={`/game/playing/${party._id}`}
             disabled={isMaster}
+            onPress={playGame}
           />
       </PlayButtonView>
     </Background>

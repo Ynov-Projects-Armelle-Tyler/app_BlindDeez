@@ -16,13 +16,15 @@ const StyledInput = styled.TextInput`
   padding: 0 20px;
 `
 
-export default ({ onBlur, onChangeText, value, placeholder }) => {
+export default ({ onBlur, onChangeText, onSubmitEditing, value, placeholder, ...rest }) => {
     return (
       <StyledInput
         onBlur={onBlur}
         onChangeText={onChangeText}
         value={value}
         placeholder={placeholder}
+        onSubmitEditing={onSubmitEditing}
+        {...rest}
       />
     )
 }

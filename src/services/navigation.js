@@ -41,9 +41,14 @@ export const linking = {
         path: 'selection/',
         screens: {
           Home: 'home/',
-          Launch: 'launch/',
-          Join: 'join/',
-          Bands: 'bands/',
+          PublicParty: 'public/:style',
+          CreateParty: 'create/',
+        },
+      },
+      Game: {
+        path: 'game/',
+        screens: {
+          Lobby: 'lobby/:id',
         },
       },
     },

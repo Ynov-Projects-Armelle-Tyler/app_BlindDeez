@@ -94,7 +94,7 @@ const CreateParty = () => {
   const togglePlay = () => setPlayer(!player)
 
   const [random, setRandom] = useState(false)
-  const toggleRandom = () => setRandom(!random)
+  const [randomPlaylist, setRandomPlaylist] = useState([])
 
   const [musicLabel, setMusicLabel] = useState([])
   const [music, setMusic] = useState([])
@@ -112,6 +112,32 @@ const CreateParty = () => {
     const label = await getApi.getPendingParties();
     if (label) {
       setMusic(label.parties)
+    }
+  }
+
+  const toggleRandom = async () => {
+    setRandom(!random)
+
+    if(!random && !randomPlaylist) {
+      let randomNumber = 15 - playlist.length
+      const randomTracks = await getApi.getRandomTracks({musicLabel, randomNumber})
+      if (randomTracks) {
+        randomTracks.random.tracks.forEach(async track => {
+          console.log(track.id)
+          const result = await getApi.getTrackFromId(track.id)
+          if (result) {
+            playlist.push(result)
+            randomPlaylist.push(result)
+          }
+        })
+      }
+    } else if (random && randomPlaylist) {
+      randomPlaylist.forEach(track => {
+        playlist.filter(e => e !== track)
+      })
+      setRandomPlaylist([])
+      console.log(playlist)
+      console.log(randomPlaylist)
     }
   }
 

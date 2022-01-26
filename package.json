@@ -24,6 +24,8 @@
     "react-native-dotenv": "^3.3.1",
     "react-native-draggable-flatlist": "^3.0.5",
     "react-native-gesture-handler": "^2.1.1",
+    "react-native-progress": "^5.0.0",
+    "react-native-progress-timer": "^1.0.1",
     "react-native-reanimated": "^2.3.1",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.10.1",

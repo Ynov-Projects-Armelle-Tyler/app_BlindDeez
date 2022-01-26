@@ -291,6 +291,32 @@ const playGame = async (id, data) => {
   }
 };
 
+const createParty = async (data) => {
+  const headers = await getHeaders();
+
+  const req = await fetch(
+    party,
+    {
+      method: 'POST',
+      mode: 'cors',
+      body: JSON.stringify(data),
+      headers
+    }
+  );
+
+  if (req.ok) {
+    const party = await req.json()
+
+    return party;
+  } else {
+    const res = await req.json();
+    console.log('HTTP-Error: ');
+    console.error(res);
+
+    return false;
+  }
+};
+
 const getTrack = async track => {
 
   const headers = await getHeaders();
@@ -375,5 +401,6 @@ export const getApi = {
   playGame,
   getTrack,
   getRandomTracks,
-  getTrackFromId
+  getTrackFromId,
+  createParty
 };

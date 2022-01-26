@@ -50,6 +50,7 @@ export const linking = {
         screens: {
           Lobby: 'lobby/:id',
           InGame: 'playing/:id',
+          Summary: 'summary/:id',
         },
       },
     },

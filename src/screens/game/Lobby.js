@@ -158,18 +158,15 @@ const PublicParty = () => {
   }
 
   const playGame = async e => {
-    // const res = await getApi.playGame(id, 'in_game');
-    //
-    // if (res) {
-    //   socket.emit('master_launch_game', { id });
-    // }
-    socket.emit('master_launch_game', { id });
+    const res = await getApi.playGame(id, 'in_game');
+
+    if (res) {
+      socket.emit('master_launch_game', { id });
+    }
   }
 
   const playerLenght = () => {
-    const master = party?.master_user?.player ? 1 : 0
-
-    return party?.users?.length + master
+    return party?.users?.length
   }
 
   const renderItem = ({ item }) => (

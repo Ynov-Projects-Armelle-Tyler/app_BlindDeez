@@ -72,9 +72,7 @@ const PublicParty = () => {
   }, []);
 
   const playerLenght = party => {
-    const master = party?.master_user.player ? 1 : 0
-
-    return party.users.length + master
+    return party.users.length
   }
 
   const joinParty = async data => {

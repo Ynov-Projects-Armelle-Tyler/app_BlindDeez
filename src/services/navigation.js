@@ -49,6 +49,7 @@ export const linking = {
         path: 'game/',
         screens: {
           Lobby: 'lobby/:id',
+          InGame: 'playing/:id',
         },
       },
     },

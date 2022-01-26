@@ -3,7 +3,9 @@ import {
   auth,
   user,
   party,
-  deezerSearch
+  random,
+  deezerSearch,
+  deezerTrack
 } from './config';
 import { socket } from './socket';
 import * as Token from './token';
@@ -125,8 +127,6 @@ const getPendingParties = async () => {
       headers
     }
   );
-
-  console.log( await req.ok)
 
   if (req.ok) {
     const parties = await req.json()
@@ -302,7 +302,53 @@ const getTrack = async track => {
       headers,
     }
   );
-  console.log(req)
+
+  if (req.ok) {
+    const res = req.json();
+
+    return res;
+  } else {
+    const res = req.json();
+    console.log('HTTP-Error: ' + res);
+
+    return false;
+  }
+};
+
+const getRandomTracks = async ({ musicLabel, number}) => {
+  const headers = await getHeaders();
+  const req = await fetch(
+      random + '/' + musicLabel,
+    {
+      method: 'GET',
+      mode: 'cors',
+      headers,
+    }
+  );
+
+  if (req.ok) {
+    const res = req.json();
+
+    return res;
+  } else {
+    const res = req.json();
+    console.log('HTTP-Error: ' + res);
+
+    return false;
+  }
+};
+
+const getTrackFromId = async id => {
+
+  const headers = await getHeaders();
+  const req = await fetch(
+      deezerTrack + id,
+    {
+      method: 'GET',
+      mode: 'cors',
+      headers,
+    }
+  );
 
   if (req.ok) {
     const res = req.json();
@@ -328,4 +374,6 @@ export const getApi = {
   editName,
   playGame,
   getTrack,
+  getRandomTracks,
+  getTrackFromId
 };

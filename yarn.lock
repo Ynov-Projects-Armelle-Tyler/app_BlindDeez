@@ -5631,6 +5631,11 @@ react-native-dotenv@^3.3.1:
   dependencies:
     dotenv "^10.0.0"
 
+react-native-draggable-flatlist@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/react-native-draggable-flatlist/-/react-native-draggable-flatlist-3.0.5.tgz#687e6f06e3b8f4bb9be493cfa8f2bd17c326bcd4"
+  integrity sha512-mfCt5Mak3Q/71GS5Wha9Yb2P2LmwGRoUbaFb2kSDSjQpCHWi+9emL7YKrRhiyvJ31UHmu960BQ8io+VFCxiIIw==
+
 react-native-gesture-handler@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.1.1.tgz#1d417bc7b551ec76129ce09861b3a01622b4ef99"

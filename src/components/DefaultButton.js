@@ -23,9 +23,9 @@ const StyledText = styled.Text`
   color: #171717;
 `
 
-export default ({ image, title, onPress }) => {
+export default ({ image, title, onPress, ...rest }) => {
     return (
-        <StyledView onPress={onPress}>
+        <StyledView onPress={onPress} {...rest}>
           { image ?. (
             <StyledImage src={image} />
           )}

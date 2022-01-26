@@ -168,9 +168,9 @@ const InGame = () => {
       state?.sound?.pause()
 
       if (data.user === state?.user) {
-        setState({ ...state, openModal: true })
+        setState({ ...state, openModal: true, found: false })
       } else {
-        setState({ ...state, userTrying: data.user, trying: false })
+        setState({ ...state, userTrying: data.user, trying: false, found: false })
       }
     }
     const onFound = async data => {

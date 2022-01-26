@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { Switch, FlatList, Image } from 'react-native'
+import { Switch, FlatList, Image, View } from 'react-native'
 import styled from 'styled-components/native'
+import { useLinkTo } from '@react-navigation/native';
 
+import { getStorage } from '../../services/utils'
 import { getApi } from '../../services/getApi'
 import bg from '../../assets/NeuBG.png'
 import Check from '../../assets/Check'
@@ -22,6 +24,10 @@ const Background = styled.ImageBackground `
 const Title = styled.Text `
   color: #171717;
   width: 180px;
+`
+
+const T = styled.Text `
+  color: #171717;
 `
 
 const TrackImage = styled.Image `
@@ -58,7 +64,7 @@ const V = styled.View `
 const PlaylistView = styled.View `
   background-color: #E5E5E5;
   min-width: 95%;
-  height: 300px;
+  height: 150px;
   margin: -10px;
   border-radius: 30px;
 `
@@ -90,6 +96,8 @@ const ButtonIcon = styled.TouchableOpacity `
 `
 
 const CreateParty = () => {
+  const linkTo = useLinkTo()
+  const [user, setUser] = useState(null)
   const [player, setPlayer] = useState(false)
   const togglePlay = () => setPlayer(!player)
 
@@ -109,9 +117,11 @@ const CreateParty = () => {
   }
 
   const getMusicLabel = async () => {
+    const user = await getStorage('user');
     const label = await getApi.getPendingParties();
     if (label) {
       setMusic(label.parties)
+      setUser(user)
     }
   }
 
@@ -174,6 +184,33 @@ const CreateParty = () => {
     getMusicLabel();
   }, []);
 
+  const _createParty = async () => {
+    const playlistToSend = playlist?.map(e => ({
+      title: e.title_short,
+      url: e.preview,
+      band: e.artist.name,
+      cover: e.album.cover,
+    }))
+
+    const party = {
+      tracks: playlistToSend,
+      master_user: { username: user, player },
+      music_label: musicLabel
+    }
+
+    const result = await getApi.createParty({ party });
+    if (result) {
+      if (player) {
+        const join = await getApi.joinParty(result.room, {
+          player: { username: user },
+          edit_type: 'add',
+        });
+      }
+
+      linkTo(`/game/lobby/${result.room}`)
+    }
+  }
+
   const renderItem = ({ item }) => (
     <ButtonMusic onPress={() => setMusicLabel(item._id)}>
       <ButtonTitle>{item._id}</ButtonTitle>
@@ -219,14 +256,23 @@ const CreateParty = () => {
       {
         musicLabel != '' ? (
           <>
-            <Title>{ musicLabel }</Title>
-            <Title>Random</Title>
-            <Switch
-              trackColor='#171717'
-              thumbColor='#F1F1F1'
-              onValueChange={toggleRandom}
-              value={random}
-            />
+            <View style={{ flexDirection: 'row' }}>
+              <T>{ musicLabel }</T>
+              <View style={{ flexDirection: 'row', marginLeft: 10 }}>
+                <T>Random</T>
+                <Switch
+                  trackColor='#171717'
+                  thumbColor='#F1F1F1'
+                  onValueChange={toggleRandom}
+                  value={random}
+                />
+              </View>
+              <View>
+                <ButtonIcon onPress={_createParty}>
+                  <Play width="15px" height="15px"/>
+                </ButtonIcon>
+              </View>
+            </View>
             <DefaultInput
               placeholder='Search a track'
               onSubmitEditing={searchTrack}

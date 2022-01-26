@@ -46,6 +46,25 @@ or
 $ yarn ios
 ```
 
+#### Run multi-devices
+##### For Android :
+*For that you can start metro then do `yarn android` to run the first device*
+*Then run with other terminal another device and redo `yarn android`*
+
+##### For Ios :
+*comming soon*
+## Android
+```bash
+# List devices
+$ emulator -list-avds
+> Pixel_3a_API_28
+> hdpi_Nexus_One
+> xhdpi_Nexus_9
+
+# Run Device
+$ emulator -avd Pixel_3a_API_28
+```
+
 ## Tools
 ### `yarn lint`
 Run Linter to check the cleanliness of your code

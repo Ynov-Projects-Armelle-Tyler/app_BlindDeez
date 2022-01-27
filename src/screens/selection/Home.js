@@ -5,7 +5,7 @@ import styled from 'styled-components/native'
 import ScreenNavigateButton from '../../components/ScreenNavigateButton';
 import bg from '../../assets/NeuBG.png'
 import Add from '../../assets/Add'
-import Partyies_logo from '../../assets/Partyies_logo'
+import Parties_logo from '../../assets/Parties_logo'
 import DefaultButton from '../../components/DefaultButton';
 import DefaultInput from '../../components/DefaultInput';
 import { getApi } from '../../services/getApi';
@@ -39,7 +39,7 @@ const StyledScrollView = styled.ScrollView `
 
 const StyleButton = styled.TouchableOpacity `
   border-radius: 15px;
-  background-color: white;
+  background-color: ${props => props.bgColor || "palevioletred"};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -48,10 +48,32 @@ const StyleButton = styled.TouchableOpacity `
   margin: 10px;
 `
 
+const ButtonTitle = styled.Text `
+  color: white;
+`
+
 const Modal = styled.Modal `
   background-color: white;
 `
 
+const colors = [
+  "#EB5160",
+  "#62A8AC",
+  "#6153CC",
+  "#EC9A29",
+  "#071013",
+  "#961D4E",
+  "#E1F4CB",
+  "#1F5CBC",
+  "#EB5160",
+  "#62A8AC",
+  "#6153CC",
+  "#EC9A29",
+  "#071013",
+  "#961D4E",
+  "#E1F4CB",
+  "#1F5CBC",
+]
 
 const Home = () => {
   const linkTo = useLinkTo();
@@ -90,12 +112,12 @@ const Home = () => {
     }
   }
 
-  const renderItem = ({ item }) => (
-    <StyleButton onPress={() => linkTo(`/selection/public/${item._id}`)}>
-      <Text>{item._id}</Text>
+  const renderItem = ({ item, index }) => (
+    <StyleButton onPress={() => linkTo(`/selection/public/${item._id}`)} bgColor={colors[index]}>
+      <ButtonTitle>{item._id}</ButtonTitle>
       <View style={{ flexDirection: 'row' }}>
-        <Partyies_logo />
-        <Text>{item.count}</Text>
+        <Parties_logo />
+        <ButtonTitle>{item.count}</ButtonTitle>
       </View>
     </StyleButton>
   );
@@ -112,7 +134,7 @@ const Home = () => {
           columnWrapperStyle={style.row}
           data={parties}
           keyExtractor={item => item._id}
-          renderItem={renderItem}
+          renderItem={(item, index) => renderItem(item, index)}
         />
         <ButtonAdd onPress={() => linkTo('/selection/create')}>
           <Add/>

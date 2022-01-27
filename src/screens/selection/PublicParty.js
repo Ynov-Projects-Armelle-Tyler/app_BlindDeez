@@ -5,7 +5,7 @@ import styled from 'styled-components/native'
 import ScreenNavigateButton from '../../components/ScreenNavigateButton';
 import bg from '../../assets/NeuBG.png'
 import Add from '../../assets/Add'
-import Partyies_logo from '../../assets/Partyies_logo'
+import Parties_logo from '../../assets/Parties_logo'
 import DefaultButton from '../../components/DefaultButton';
 import DefaultInput from '../../components/DefaultInput';
 import { getApi } from '../../services/getApi';

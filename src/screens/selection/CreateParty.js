@@ -74,13 +74,14 @@ const ButtonTitle = styled.Text `
 `
 
 const ButtonMusic = styled.TouchableOpacity `
-  background-color: #171717;
-  height: 80px;
-  width: 110px;
-  margin: 30px;
+  border-radius: 15px;
+  background-color: ${props => props.bgColor || "palevioletred"};
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 80px;
+  width: 110px;
+  margin: 10px;
 `
 
 const ButtonIcon = styled.TouchableOpacity `
@@ -94,6 +95,26 @@ const ButtonIcon = styled.TouchableOpacity `
   elevation: 3;
   margin: 5px;
 `
+
+
+const colors = [
+  "#EB5160",
+  "#62A8AC",
+  "#6153CC",
+  "#EC9A29",
+  "#071013",
+  "#961D4E",
+  "#E1F4CB",
+  "#1F5CBC",
+  "#EB5160",
+  "#62A8AC",
+  "#6153CC",
+  "#EC9A29",
+  "#071013",
+  "#961D4E",
+  "#E1F4CB",
+  "#1F5CBC",
+]
 
 const CreateParty = () => {
   const linkTo = useLinkTo()
@@ -128,12 +149,11 @@ const CreateParty = () => {
   const toggleRandom = async () => {
     setRandom(!random)
 
-    if(!random && !randomPlaylist) {
+    if(!random && randomPlaylist.length < 1) {
       let randomNumber = 15 - playlist.length
       const randomTracks = await getApi.getRandomTracks({musicLabel, randomNumber})
       if (randomTracks) {
         randomTracks.random.tracks.forEach(async track => {
-          console.log(track.id)
           const result = await getApi.getTrackFromId(track.id)
           if (result) {
             playlist.push(result)
@@ -141,13 +161,11 @@ const CreateParty = () => {
           }
         })
       }
-    } else if (random && randomPlaylist) {
+    } else if (random && randomPlaylist.length > 0) {
       randomPlaylist.forEach(track => {
         playlist.filter(e => e !== track)
       })
       setRandomPlaylist([])
-      console.log(playlist)
-      console.log(randomPlaylist)
     }
   }
 
@@ -211,8 +229,8 @@ const CreateParty = () => {
     }
   }
 
-  const renderItem = ({ item }) => (
-    <ButtonMusic onPress={() => setMusicLabel(item._id)}>
+  const renderItem = ({ item, index }) => (
+    <ButtonMusic onPress={() => setMusicLabel(item._id)} bgColor={colors[index]}>
       <ButtonTitle>{item._id}</ButtonTitle>
     </ButtonMusic>
   );
@@ -314,7 +332,7 @@ const CreateParty = () => {
               numColumns={2}
               data={music}
               keyExtractor={item => item._id }
-              renderItem={renderItem}
+              renderItem={(item, index) => renderItem(item, index)}
             />
           </>
         )

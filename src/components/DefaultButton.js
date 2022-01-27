@@ -3,12 +3,13 @@ import styled from 'styled-components/native'
 
 const StyledView = styled.TouchableOpacity `
   background-color: #F1F1F1;
-  width: 240px;
+  width: 200px;
   height: 50px;
   margin: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  align-self: center;
   elevation: 3;
   border-radius: 26px;
 `
@@ -22,9 +23,9 @@ const StyledText = styled.Text`
   color: #171717;
 `
 
-export default ({ image, title, onPress }) => {
+export default ({ image, title, onPress, ...rest }) => {
     return (
-        <StyledView onPress={onPress}>
+        <StyledView onPress={onPress} {...rest}>
           { image ?. (
             <StyledImage src={image} />
           )}

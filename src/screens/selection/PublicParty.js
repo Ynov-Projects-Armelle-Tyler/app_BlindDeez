@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { useLinkTo } from '@react-navigation/native';
+import { useLinkTo, useRoute } from '@react-navigation/native';
 import styled from 'styled-components/native'
 import ScreenNavigateButton from '../../components/ScreenNavigateButton';
 import bg from '../../assets/NeuBG.png'
@@ -39,7 +39,7 @@ const StyledScrollView = styled.ScrollView `
 
 const StyleButton = styled.TouchableOpacity `
   border-radius: 15px;
-  background-color: ${props => props.bgColor || "palevioletred"};
+  background-color: white;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -48,112 +48,73 @@ const StyleButton = styled.TouchableOpacity `
   margin: 10px;
 `
 
-const ButtonTitle = styled.Text `
-  color: white;
-`
-
 const Modal = styled.Modal `
   background-color: white;
 `
 
-const colors = [
-  "#EB5160",
-  "#62A8AC",
-  "#6153CC",
-  "#EC9A29",
-  "#071013",
-  "#961D4E",
-  "#E1F4CB",
-  "#1F5CBC",
-  "#EB5160",
-  "#62A8AC",
-  "#6153CC",
-  "#EC9A29",
-  "#071013",
-  "#961D4E",
-  "#E1F4CB",
-  "#1F5CBC",
-]
 
-const Home = () => {
+const PublicParty = () => {
   const linkTo = useLinkTo();
+  const { style } = useRoute().params;
   const [parties, setParties] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [code, setCode] = useState();
 
-  const getParties = async () => {
-    const parties = await getApi.getPendingParties();
+  const getParties = async params => {
+    const { parties } = await getApi.getPendingByMusicLabel(params);
     if (parties) {
-      setParties(parties.parties)
+      setParties(parties)
     }
   }
 
   useEffect(() => {
-    getParties();
+    getParties(style)
   }, []);
 
-  const onChange = e => {
-    setCode(e);
+  const playerLenght = party => {
+    return party.users.length
   }
 
-  const joinParty = async () => {
+  const joinParty = async data => {
     const username = await getStorage('user');
 
-    const { party } = await getApi.joinParty('code', {
+    const { party } = await getApi.joinParty(data._id, {
       player: { username },
       edit_type: 'add',
-      code
     });
 
     if (party) {
       linkTo(`/game/lobby/${party._id}`)
-      setModalVisible(false)
-      setCode('')
     }
   }
 
-  const renderItem = ({ item, index }) => (
-    <StyleButton onPress={() => linkTo(`/selection/public/${item._id}`)} bgColor={colors[index]}>
-      <ButtonTitle>{item._id}</ButtonTitle>
+  const renderItem = ({ item }) => (
+    <StyleButton onPress={() => joinParty(item)}>
+      <Text>{item.name}</Text>
       <View style={{ flexDirection: 'row' }}>
-        <Parties_logo />
-        <ButtonTitle>{item.count}</ButtonTitle>
+        <Text>{playerLenght(item)} Players</Text>
       </View>
     </StyleButton>
   );
 
   return (
     <Background source={bg}>
-      <DefaultButton
-        onPress={() => setModalVisible(true)}
-        title="Join with a code"
-      />
-        <FlatList
-          style={{margin:5}}
-          numColumns={2}
-          columnWrapperStyle={style.row}
-          data={parties}
-          keyExtractor={item => item._id}
-          renderItem={(item, index) => renderItem(item, index)}
-        />
-        <ButtonAdd onPress={() => linkTo('/selection/create')}>
-          <Add/>
-        </ButtonAdd>
-
-        <Modal
-          animationType="slide"
-          visible={modalVisible}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View>
-            <DefaultInput
-              onSubmitEditing={joinParty}
-              onChangeText={onChange}
-              value={code}
-              placeholder='CODE'
+      <Text>{ style }</Text>
+      { parties?.length
+          ? (
+            <FlatList
+              style={{margin:5}}
+              numColumns={2}
+              columnWrapperStyle={style.row}
+              data={parties}
+              keyExtractor={item => item._id}
+              renderItem={renderItem}
             />
-          </View>
-        </Modal>
+          )
+          : (
+            <Text>0 Parties</Text>
+          )
+      }
     </Background>
   );
 };
@@ -164,4 +125,4 @@ const style = StyleSheet.create({
       justifyContent: "space-around"
   }
 });
-export default Home;
+export default PublicParty;
